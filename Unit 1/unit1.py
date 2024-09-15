@@ -69,3 +69,89 @@ print(shuffle(cards))  # Expected Output: [9, 'Joker', 2, 3, 3, 2, 'Joker', 9]
 
 cards = [10, 10, 2, 2]
 print(shuffle(cards))  # Expected Output: [10, 2, 10, 2]
+
+
+# Local Maximum Problem
+### U - Understand
+# What is the exact definition of a "local maximum" in this context?
+# (This question helps clarify whether the problem requires only a local maximum in the given 3x3 sub-grid or a more specific definition.)
+# What are the edge cases or constraints for the grid?
+# (This question helps determine if there are any constraints such as grid size limitations or special cases like grids smaller than 3x3.)
+### P - Plan
+# Write out in plain English what you want to do:
+# Iterate through each cell in the grid, except for the edges, as the local maximums are defined within the inner cells.
+# For each cell, check the 3x3 matrix centered on that cell.
+# Compute the maximum value within this 3x3 matrix.
+# Collect the maximum values from each cell and construct the resulting grid of local maximums.
+# Translate each sub-problem into pseudocode:
+# Iterate through inner cells of the grid:
+# Loop i from 1 to n-2
+# Loop j from 1 to n-2
+# Find the maximum in the 3x3 matrix centered at cell (i, j):
+# Compute max_val as the maximum of:
+# grid[i-1][j-1]
+# grid[i-1][j]
+# grid[i-1][j+1]
+# grid[i][j-1]
+# grid[i][j]
+# grid[i][j+1]
+# grid[i+1][j-1]
+# grid[i+1][j]
+# grid[i+1][j+1]
+# Append the result to local_maxes:
+# Append the computed max_val to the current row's list
+# After finishing the inner loop, append the row list to local_maxes
+### I - Implement
+# Translate the pseudocode into Python and share your final answer:
+def local_maximums(grid):
+    n = len(grid)
+    local_maxes = []
+    # Iterate over the inner part of the grid, skipping edges
+    for i in range(1, n - 1):
+        row_maxes = []
+        for j in range(1, n - 1):
+            # Find the maximum value in the 3x3 matrix centered at grid[i][j]
+            max_val = max(
+                grid[i-1][j-1], grid[i-1][j], grid[i-1][j+1],
+                grid[i][j-1], grid[i][j], grid[i][j+1],
+                grid[i+1][j-1], grid[i+1][j], grid[i+1][j+1]
+            )
+            row_maxes.append(max_val)
+        local_maxes.append(row_maxes)
+    
+    return local_maxes
+
+grid = [
+    [9, 9, 8, 1],
+    [5, 6, 2, 6],
+    [8, 2, 6, 4],
+    [6, 2, 2, 2]
+]
+print(local_maximums(grid))  # Expected Output: [[9, 9], [8, 6]]
+
+grid = [
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1]
+]
+print(local_maximums(grid))  # Expected Output: [[2, 2, 2], [2, 2, 2], [2, 2, 2]]
+
+
+# Defuse the Bomb Problem
+### U - Understand
+
+def defuse(code, k):
+	pass
+code = [5, 7, 1, 4]
+k = 3
+defuse(code, k)
+
+code = [1, 2, 3, 4]
+k = 0
+defuse(code, k)
+
+code = [2, 4, 9, 3]
+k = -2
+defuse(code, k)
