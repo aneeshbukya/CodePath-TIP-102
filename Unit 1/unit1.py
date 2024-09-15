@@ -326,13 +326,10 @@ def merge_intervals(intervals):
         return []
     # Step 1: Sort intervals based on the starting time
     intervals.sort(key=lambda x: x[0])
-
     # Step 2: Initialize the list to hold merged intervals
     merged_intervals = []
-
     # Start with the first interval
     current_interval = intervals[0]
-    
     # Iterate through the sorted intervals
     for interval in intervals[1:]:
         # Check if the current interval overlaps with the interval to be merged
@@ -344,12 +341,58 @@ def merge_intervals(intervals):
             merged_intervals.append(current_interval)
             # Update the current interval to the new interval
             current_interval = interval
-
     # Add the last interval after the loop
     merged_intervals.append(current_interval)
-
     return merged_intervals
 
 # Example Usage
 print(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))  # Expected Output: [[1, 6], [8, 10], [15, 18]]
 print(merge_intervals([[1, 4], [4, 5]]))  # Expected Output: [[1, 5]]
+
+# Insert Interval Problem
+### U - Understand
+# What should we do if the new interval overlaps with multiple existing intervals?
+# We need to merge the new interval with all overlapping intervals and combine them into one interval.
+# How should we handle cases where the new interval does not overlap with any existing intervals?
+# The new interval should be inserted in its correct position without merging.
+### P - Plan
+# Write out in plain English what you want to do:
+# Traverse the existing intervals and determine where the new interval should be inserted.
+# Merge the new interval with any overlapping intervals.
+# Return the list of intervals after insertion and merging.
+# Translate each sub-problem into pseudocode:
+# Find the correct position to insert the new interval:
+# Iterate through the list of existing intervals.
+# Add all intervals that come before the new interval to the result list.
+# Merge overlapping intervals:
+# For intervals that overlap with the new interval, extend the new interval to include them.
+# Continue merging until no more overlaps are found.
+# Add the remaining intervals:
+# Add any remaining intervals that come after the merged interval.
+### I - Implement
+# Translate the pseudocode into Python
+def insert_interval(intervals, new_interval):
+    result = []
+    i = 0
+    n = len(intervals)
+    # Step 1: Add all intervals that come before the new_interval
+    while i < n and intervals[i][1] < new_interval[0]:
+        result.append(intervals[i])
+        i += 1
+    # Step 2: Merge all overlapping intervals with new_interval
+    while i < n and intervals[i][0] <= new_interval[1]:
+        new_interval[0] = min(new_interval[0], intervals[i][0])
+        new_interval[1] = max(new_interval[1], intervals[i][1])
+        i += 1
+    # Add the merged interval
+    result.append(new_interval)
+
+    # Step 3: Add all remaining intervals
+    while i < n:
+        result.append(intervals[i])
+        i += 1
+
+    return result
+# Example Usage
+print(insert_interval([[1, 3], [6, 9]], [2, 5]))  # Expected Output: [[1, 5], [6, 9]]
+print(insert_interval([[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8]))  # Expected Output: [[1, 2], [3, 10], [12, 16]]
