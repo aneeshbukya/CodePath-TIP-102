@@ -294,3 +294,62 @@ def expose_superman(trust, n):
 print(expose_superman([[1, 2]], 2))  # Expected Output: 2
 print(expose_superman([[1, 3], [2, 3]], 3))  # Expected Output: 3
 print(expose_superman([[1, 3], [2, 3], [3, 1]], 3))  # Expected Output: -1
+
+# Merge Intervals Problem
+### U - Understand
+# How do we determine if two intervals overlap?
+# Two intervals [a, b] and [c, d] overlap if a <= d and b >= c.
+# How do we efficiently merge overlapping intervals?
+# We need to first sort the intervals based on their start times, and then iterate through them to merge any overlapping intervals.
+### P - Plan
+# Write out in plain English what you want to do:
+# Sort the intervals based on their starting times.
+# Initialize an empty list to store merged intervals.
+# Iterate through the sorted intervals and merge any overlapping intervals.
+# Add the merged intervals to the result list.
+# Return the result list of merged intervals.
+# Translate each sub-problem into pseudocode:
+# Sort intervals by their start time:
+# Use a sorting algorithm to sort the intervals array based on the start of each interval.
+# Initialize the merged intervals list:
+# Create an empty list to keep track of merged intervals.
+# Iterate through the sorted intervals:
+# For each interval, check if it overlaps with the last interval in the merged list.
+# If it overlaps, merge the intervals by updating the end time of the last interval in the merged list.
+# If it does not overlap, simply add the current interval to the merged list.
+# Return the list of merged intervals:
+# After processing all intervals, return the merged intervals list.
+### I - Implement
+# Translate the pseudocode into Python 
+def merge_intervals(intervals):
+    if not intervals:
+        return []
+    # Step 1: Sort intervals based on the starting time
+    intervals.sort(key=lambda x: x[0])
+
+    # Step 2: Initialize the list to hold merged intervals
+    merged_intervals = []
+
+    # Start with the first interval
+    current_interval = intervals[0]
+    
+    # Iterate through the sorted intervals
+    for interval in intervals[1:]:
+        # Check if the current interval overlaps with the interval to be merged
+        if interval[0] <= current_interval[1]:
+            # Merge the intervals by extending the end of the current interval
+            current_interval[1] = max(current_interval[1], interval[1])
+        else:
+            # No overlap, add the current interval to the merged list
+            merged_intervals.append(current_interval)
+            # Update the current interval to the new interval
+            current_interval = interval
+
+    # Add the last interval after the loop
+    merged_intervals.append(current_interval)
+
+    return merged_intervals
+
+# Example Usage
+print(merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))  # Expected Output: [[1, 6], [8, 10], [15, 18]]
+print(merge_intervals([[1, 4], [4, 5]]))  # Expected Output: [[1, 5]]
