@@ -141,17 +141,59 @@ print(local_maximums(grid))  # Expected Output: [[2, 2, 2], [2, 2, 2], [2, 2, 2]
 
 # Defuse the Bomb Problem
 ### U - Understand
-
+# How do we handle the circular nature of the array when summing elements?
+# (This question ensures we correctly manage the wrap-around when calculating sums.)
+# What should be the approach when the length of the array is very small or when k has extreme values?
+# (This question helps address edge cases like very small arrays or large values of k.)
+#### P - Plan
+# Write out in plain English what you want to do:
+# First, initialize a result array with zeros.
+# If k is positive, iterate through each element in the array and replace it with the sum of the next k elements, accounting for circular indexing.
+# If k is negative, convert k to a positive number and then replace each element with the sum of the previous |k| elements, also accounting for circular indexing.
+# If k is zero, the result remains an array of zeros.
+# Translate each sub-problem into pseudocode:
+# If k > 0:
+# For each index i in the array:
+# Initialize sum to 0.
+# For each index j from 1 to k:
+# Add the element at position (i + j) % n to sum.
+# Set result[i] to sum.
+# If k < 0:
+# Convert k to positive by setting k = -k.
+# For each index i in the array:
+# Initialize sum to 0.
+# For each index j from 1 to k:
+# Add the element at position (i - j) % n to sum.
+# Set result[i] to sum.
+# If k == 0:
+# Initialize the result array with zeros.
+#### I - Implement
+# Translate the pseudocode into Python and share your final answer:
 def defuse(code, k):
-	pass
-code = [5, 7, 1, 4]
-k = 3
-defuse(code, k)
+    # Determine the length of the circular array
+    n = len(code)
+    # Initialize the result array with zeros of the same length as the input array
+    result = [0] * n  
+    
+    # Case when k > 0: Compute the sum of the next k elements
+    if k > 0:
+        for i in range(n):
+            # Compute the sum of the next k elements for the current index i
+            result[i] = sum(code[(i + j) % n] for j in range(1, k + 1))
+            
+    # Case when k < 0: Compute the sum of the previous |k| elements
+    elif k < 0:
+        k = -k  # Convert k to positive for easier handling of previous elements
+        for i in range(n):
+            # Compute the sum of the previous k elements for the current index i
+            result[i] = sum(code[(i - j) % n] for j in range(1, k + 1))
+    
+    # Case when k == 0: The result is already initialized to zeros, so no additional changes needed
 
-code = [1, 2, 3, 4]
-k = 0
-defuse(code, k)
+    return result
 
-code = [2, 4, 9, 3]
-k = -2
-defuse(code, k)
+# Example Usage
+print(defuse([5, 7, 1, 4], 3))  # Expected Output: [12, 10, 16, 13]
+print(defuse([1, 2, 3, 4], 0))  # Expected Output: [0, 0, 0, 0]
+print(defuse([2, 4, 9, 3], -2)) # Expected Output: [12, 5, 6, 13]
+
