@@ -168,7 +168,7 @@ print(local_maximums(grid))  # Expected Output: [[2, 2, 2], [2, 2, 2], [2, 2, 2]
 # If k == 0:
 # Initialize the result array with zeros.
 #### I - Implement
-# Translate the pseudocode into Python and share your final answer:
+# Translate the pseudocode into Python 
 def defuse(code, k):
     # Determine the length of the circular array
     n = len(code)
@@ -197,3 +197,100 @@ print(defuse([5, 7, 1, 4], 3))  # Expected Output: [12, 10, 16, 13]
 print(defuse([1, 2, 3, 4], 0))  # Expected Output: [0, 0, 0, 0]
 print(defuse([2, 4, 9, 3], -2)) # Expected Output: [12, 5, 6, 13]
 
+# Eeyore's House Problem
+### U - Understand
+# How should we handle cases where elements in pile2 are zero?
+# (Since k is positive, pile2 should not contain zero. This question ensures we handle cases where the multiplication by zero might need special consideration.)
+# What is the expected performance for large inputs, and are there any optimizations we need?
+# (This question helps understand if the straightforward approach needs any enhancements for better performance.)
+#### P - Plan
+# Write out in plain English what you want to do:
+# Initialize a counter to keep track of the number of good pairs.
+# Iterate over each stick in pile1.
+# For each stick in pile1, iterate over each stick in pile2.
+# Multiply the stick from pile2 by k to get a product.
+# Check if the stick from pile1 is divisible by this product.
+# If it is, increment the counter.
+# Return the final count of good pairs.
+# Translate each sub-problem into pseudocode:
+# Initialize the count of good pairs:
+# Set count to 0.
+# Iterate through each stick in pile1:
+# For each stick stick1 in pile1, do the following:
+# Iterate through each stick in pile2.
+# For each stick stick2 in pile2, compute the product product = stick2 * k`.
+# Check if stick1 is divisible by product.
+# If stick1 % product == 0, increment count.
+# Return the count of good pairs:
+# Return count.
+#### I - Implement
+# Translate the pseudocode into Python 
+def good_pairs(pile1, pile2, k):
+    # Initialize the count of good pairs
+    count = 0
+    # Iterate through each stick in pile1
+    for stick1 in pile1:
+        # Iterate through each stick in pile2
+        for stick2 in pile2:
+            # Compute the product of stick2 and k
+            product = stick2 * k
+            # Check if stick1 is divisible by the product
+            if stick1 % product == 0:
+                count += 1
+    return count
+
+# Example Usage
+pile1 = [1, 3, 4]
+pile2 = [1, 3, 4]
+k = 1
+print(good_pairs(pile1, pile2, k))  # Expected Output: 5
+
+pile1 = [1, 2, 4, 12]
+pile2 = [2, 4]
+k = 3
+print(good_pairs(pile1, pile2, k))  # Expected Output: 2
+
+# Exposing Superman Problem
+### U - Understand
+# What specific conditions must be met for someone to be Superman?
+# Superman must trust no one (i.e., Superman is not in any trust[i][0]).
+# Everyone else must trust Superman (i.e., Superman must appear in every trust[i][1] except themselves).
+# How do we efficiently check these conditions with the given trust data?
+# We need to track the number of people who trust each individual and also ensure that an individual does not trust anyone.
+### P - Plan
+# Write out in plain English what you want to do:
+# Create two lists: one to count the number of people who trust each individual and another to track if someone trusts another.
+# Iterate through the trust list to update these counts.
+# Identify if there is exactly one person who is trusted by everyone else and does not trust anyone.
+# Translate each sub-problem into pseudocode:
+# Initialize two lists:
+# trust_count to count how many people trust each individual.
+# other_trust_count to track if an individual trusts anyone.
+# Update counts from the trust list:
+# For each pair [a, b] in trust, increment trust_count[b] and mark other_trust_count[a] as True.
+# Check for the Superman candidate:
+# Iterate through the trust_count and other_trust_count lists.
+# Find if there is exactly one person who is trusted by n - 1 people and does not trust anyone (other_trust_count is False for that individual).
+### I - Implement
+# Translate the pseudocode into Python 
+def expose_superman(trust, n):
+    # Initialize lists to track the number of trusts and if someone trusts anyone
+    trust_count = [0] * (n + 1)  # Index 0 will not be used
+    other_trust_count = [False] * (n + 1)
+    
+    # Process the trust relationships
+    for a, b in trust:
+        trust_count[b] += 1  # b is trusted by one more person
+        other_trust_count[a] = True  # a trusts someone
+    
+    # Identify the candidate for Superman
+    for i in range(1, n + 1):
+        if trust_count[i] == n - 1 and not other_trust_count[i]:
+            return i  # Found Superman
+    
+    return -1  # No valid candidate found
+
+# Example Usage
+print(expose_superman([[1, 2]], 2))  # Expected Output: 2
+print(expose_superman([[1, 3], [2, 3]], 3))  # Expected Output: 3
+print(expose_superman([[1, 3], [2, 3], [3, 1]], 3))  # Expected Output: -1
