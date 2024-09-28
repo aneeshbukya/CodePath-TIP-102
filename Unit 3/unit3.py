@@ -115,46 +115,51 @@ print(make_smallest_watchlist("seven"))  # Expected Output: "neven"
 # If after 10 * timeline.length turns we can't match the timeline, return an empty array.
 # I - Implement
 def mark_event_timeline(event, timeline):
-    # Initialize the string t with all '?' characters and an empty result list
-    current_state = ['?'] * len(timeline)
-    placement_indices = []
-    
-    # Check if placing 'event' at position index brings current_state closer to timeline
-    def can_place_event_at(index):
-        for i in range(len(event)):
-            # Only place event if the characters either match or we have a '?'
-            if current_state[index + i] != '?' and current_state[index + i] != event[i]:
-                return False
-        return True
-    
-    # Place the 'event' at the given index by replacing '?' in current_state
-    def place_event_at(index):
-        for i in range(len(event)):
-            current_state[index + i] = event[i]
-    
-    # Maximum number of turns we can take to match the timeline
-    max_turns = 10 * len(timeline)
-    
-    # Try to place the event and match the timeline within the allowed turns
-    for _ in range(max_turns):
-        # Loop through each valid position where we can place the event
-        for start_index in range(len(timeline) - len(event) + 1):
-            if can_place_event_at(start_index):
-                # Place the event at the valid index
-                place_event_at(start_index)
-                # Record this index where the event was placed
-                placement_indices.append(start_index)
-                
-                # If current_state matches the timeline, return the result
-                if ''.join(current_state) == timeline:
-                    return placement_indices
-    
-    # If we can't match the timeline within the allowed turns, return an empty list
+    # Step 1: Initialize the initial state of t and the queue
+    n = len(timeline)  # Length of the timeline
+    m = len(event)     # Length of the event
+    max_turns = 10 * n  # Maximum allowed turns
+    initial_t = '?' * n  # Start with all '?' characters
+    queue = [(initial_t, [])]  # Queue with initial state (as a list)
+    visited = set()  # Set to track visited states
+    visited.add(initial_t)  # Mark initial state as visited
+
+    turns = 0  # Counter for the number of turns
+
+    # Step 2: Process the queue
+    while queue and turns < max_turns:
+        turns += 1  # Increment the number of turns
+        
+        # Get the number of states to process at this level
+        current_level_size = len(queue)
+
+        for _ in range(current_level_size):
+            current_t, indices = queue.pop(0)  # Dequeue the current state (from the front)
+
+            # Step 3: Try to place the event at every possible position
+            for i in range(n - m + 1):  # Valid positions for placing event
+                # Create a new version of t by placing event at index i
+                new_t = list(current_t)  # Convert to list for mutability
+                for j in range(m):
+                    new_t[i + j] = event[j]  # Place the event characters
+                new_t = ''.join(new_t)  # Convert back to string
+
+                # Step 4: Check if the new state matches the timeline
+                if new_t == timeline:
+                    return indices + [i]  # Return the updated indices if matched
+
+                # Step 5: Enqueue the new state if it's not visited
+                if new_t not in visited:
+                    visited.add(new_t)  # Mark the new state as visited
+                    queue.append((new_t, indices + [i]))  # Enqueue new state with updated indices
+
+    # Step 6: If queue is exhausted or limit exceeded, return empty list
     return []
 
-# Example Usage:
-print(mark_event_timeline("abc", "ababc"))  # Expected Output: [0, 2]
-print(mark_event_timeline("abca", "aabcaca"))  # Expected Output: [3, 0, 1]
+# Example Usage
+print(mark_event_timeline("abc", "ababc"))    # Output: [0, 2]
+print(mark_event_timeline("abca", "aabcaca")) # Output: [3, 0, 1]
+
 
 # Validate Animal Sheltering Sequence 
 # U - Understand
